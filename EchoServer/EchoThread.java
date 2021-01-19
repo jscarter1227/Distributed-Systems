@@ -1,4 +1,4 @@
-import java.net.Socket;
+import java.net.*;
 import java.io.*;
 
 public class EchoThread implements Runnable
@@ -11,10 +11,12 @@ public class EchoThread implements Runnable
 
     public void run() 
     {
+        // To store client characters
         char charFromClient;
 
         try
         {
+            // Create Reader/Writer to read clients input
             BufferedReader fromClient = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             PrintWriter toClient = new PrintWriter(clientSocket.getOutputStream(), true);
 
@@ -22,6 +24,8 @@ public class EchoThread implements Runnable
             {
                 charFromClient = (char)fromClient.read();
                 toClient.println(charFromClient);
+                
+                //TODO: Program exit
             }
         }
         catch (Exception e)
