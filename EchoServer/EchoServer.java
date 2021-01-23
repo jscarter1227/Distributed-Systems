@@ -2,13 +2,14 @@ import java.net.*;
 import java.io.*;
 import java.lang.Thread;
 
-public class EchoServer 
+public class EchoServer
 {
-    public static void main(String[] args) 
+    public static void main(String[] args)
     {
         // need to check if a port number is provided
         if(args.length != 1)
         {
+            //if arguments incorrect, print error message and return
             System.out.println("Error, port number needed.");
             return;
         }
@@ -18,11 +19,11 @@ public class EchoServer
 
         // if no problems, the server should work as expected
         try
-        {   
+        {
             // creates an echoServer object that will be listening on this port
             ServerSocket echoServer = new ServerSocket(port);
             System.out.println("Server Initialized on Port: " + port);
-            
+
             // creates the threads so multiple clients can connect to server
             while(true)
             {
@@ -33,7 +34,7 @@ public class EchoServer
         }
 
         // if there is any kind of error it will print out the appropriate error message
-        catch(IOException e) 
+        catch(IOException e)
         {
             // Prints if exception found
             System.out.println("Exception caught:");

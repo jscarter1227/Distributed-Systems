@@ -9,6 +9,7 @@ public class EchoThread implements Runnable
         clientSocket = socket;
     }
 
+    //State is used to track the current progess towards completion of "QUIT" string
     enum State {
         DEFAULT,
         Q_RECIEVED,
@@ -17,7 +18,7 @@ public class EchoThread implements Runnable
         T_RECIEVED
     }
 
-    public void run() 
+    public void run()
     {
         // To store client characters
         char charFromClient;
@@ -59,7 +60,7 @@ public class EchoThread implements Runnable
                     }
                     toClient.writeByte(charFromClient);
                 }
-                else 
+                else
                 {
                     // If character recieved is not valid, send back blank character.
                     // Will cause errors otherwise.
