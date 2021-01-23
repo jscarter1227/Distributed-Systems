@@ -51,7 +51,10 @@ public class EchoThread implements Runnable
                     }
                     else if((charFromClient == 'T' || charFromClient == 't') && exitState == State.I_RECIEVED)
                     {
+                        // Final state, loop will now exit after recieving final state.
                         exitState = State.T_RECIEVED;
+                        toClient.writeByte(charFromClient);
+                        clientSocket.close();
                     }
                     else
                     {
