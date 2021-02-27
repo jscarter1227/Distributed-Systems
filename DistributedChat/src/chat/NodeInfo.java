@@ -12,4 +12,13 @@ public class NodeInfo {
        name = input_name;
        port = input_port;
    }
+   
+   public String getAddress() {
+	   return ip;
+   }
+   
+   public int getPort() {
+	   return port;
+   }
+   
 }
