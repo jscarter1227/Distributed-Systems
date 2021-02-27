@@ -26,7 +26,8 @@ public class Receiver extends Thread implements Serializable {
 
 	@Override
 	public void run() {
-	  while (true) {
+	  while (true) 
+	  {
 	    try
 	    {
 	      (new ReceiverWorker(receiverSocket.accept())).start();
@@ -37,3 +38,4 @@ public class Receiver extends Thread implements Serializable {
 	    }
 	  }
 	}
+}

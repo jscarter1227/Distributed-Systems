@@ -33,8 +33,6 @@ public class Sender extends Thread {
         ObjectOutputStream toReceiver;
         ObjectInputStream fromReceiver;
 
-        NodeInfo participantInfo;
-
         while(true)
         {
             inputLine = userInput.nextLine();
@@ -62,7 +60,9 @@ public class Sender extends Thread {
             	}
             	catch(IOException e) {
             		System.err.println("Failed to join chat.");
-            	}
+            	} catch (ClassNotFoundException e) {
+            		System.err.println("Failed to join chat.");
+				}
             }
             else if(inputLine.startsWith("LEAVE"))
             {
