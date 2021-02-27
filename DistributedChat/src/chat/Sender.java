@@ -54,13 +54,17 @@ public class Sender extends Thread {
 	            	ArrayList receivedMessage = (ArrayList)fromReceiver.readObject();
 	            	
 	            	ChatNode.nodeList = receivedMessage;
+	            	ChatNode.nodeList.add(myNode);
+	            	// TODO: Tell everyone to update their ArrayList w/ this Node
 	            	
 	            	System.out.println("Joined chat.");
 	            	socket.close();
             	}
             	catch(IOException e) {
             		System.err.println("Failed to join chat.");
-            	} catch (ClassNotFoundException e) {
+            	} 
+            	catch (ClassNotFoundException e) 
+            	{
             		System.err.println("Failed to join chat.");
 				}
             }

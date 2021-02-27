@@ -21,4 +21,8 @@ public class NodeInfo {
 	   return port;
    }
    
+   public String getName() {
+	   return name;
+   }
+   
 }

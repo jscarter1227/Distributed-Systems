@@ -5,15 +5,19 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.*;
 
+import chat.Message.MessageType;
+
 public class ReceiverWorker extends Thread {
 	Socket connection = null;
     Socket peerConnection = null;
     ObjectInputStream readFromNet = null;
     ObjectOutputStream writeToNet = null;
-    Object message = null;
+    Message message = null;
+    NodeInfo me = null;
     
-	public ReceiverWorker(Socket socket)
+	public ReceiverWorker(Socket socket, NodeInfo myNode)
 	{
+		me = myNode;
 		connection = socket;
 		try
 		{
@@ -23,7 +27,7 @@ public class ReceiverWorker extends Thread {
 		catch(IOException ex)
 		{
 			System.err.println("Message unable to read.");
-			System.exit(0);
+			System.exit(1);
 		}
 	}
 	
@@ -38,7 +42,22 @@ public class ReceiverWorker extends Thread {
 			System.err.println("Message unable to read.");
 		}
 		
-		
+		if(message.type == MessageType.JOIN)
+		{
+			// TODO: Add node w/ IP
+			// Print join message as well
+		}
+		else if(message.type == MessageType.LEAVE) 
+		{
+			// TODO: Remove node w/ IP
+			// Print left message as well
+		}
+		else if(message.type == MessageType.MESSAGE)
+		{
+			// TODO: Display chat
+			System.out.println(message.message);
+		}
+
 	}
 
 }

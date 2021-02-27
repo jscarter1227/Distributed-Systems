@@ -12,7 +12,6 @@ import java.util.logging.*;
 
 public class ChatNode
 {
-    // TODO: we need to make a participant list to share between sender and receiver
 	public static ArrayList<NodeInfo> nodeList;
     public static NodeInfo me = null;
 
