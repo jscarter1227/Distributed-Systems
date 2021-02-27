@@ -4,7 +4,7 @@ public class NodeInfo {
    String name;
    String ip;
    int port;
-   NodeInfo participantlist[];
+   //NodeInfo participantlist[];
 
    public NodeInfo( String input_ip, String input_name, int input_port)
    {

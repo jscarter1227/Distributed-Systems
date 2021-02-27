@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.*;
+import java.util.ArrayList;
 
 import chat.Message.MessageType;
 
@@ -32,7 +33,7 @@ public class ReceiverWorker extends Thread {
 	}
 	
 	public void run()
-	{
+	{	   
 		try
 		{
 			message = (Message)readFromNet.readObject();
@@ -44,17 +45,35 @@ public class ReceiverWorker extends Thread {
 		
 		if(message.type == MessageType.JOIN)
 		{
-			// TODO: Add node w/ IP
+			// Add node w/ IP
 			// Print join message as well
+		   ChatNode.nodeList.add(message.node);
+	      System.out.println(message.node.getName() + ": has joined");
+		   
+	      try
+	         {
+	            writeToNet.writeObject(ChatNode.nodeList);
+	         }
+	      catch(IOException ex)
+	         {
+	            System.err.println("Message unable to read.");
+	            System.exit(1);
+	         }
+	      
+	      // update everyone elses lists
+	      ChatNode.sender.update(message.node);
 		}
 		else if(message.type == MessageType.LEAVE) 
 		{
-			// TODO: Remove node w/ IP
+			// Remove node w/ IP
 			// Print left message as well
+	      ChatNode.nodeList.remove(message.node);
+         System.out.println(message.node.getName() + ": has left");
+
 		}
 		else if(message.type == MessageType.MESSAGE)
 		{
-			// TODO: Display chat
+			// Display chat
 			System.out.println(message.message);
 		}
 

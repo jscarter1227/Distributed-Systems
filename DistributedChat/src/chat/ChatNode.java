@@ -94,7 +94,7 @@ public class ChatNode
         }
         catch (ArrayIndexOutOfBoundsException exception)
         {
-            propsFile = "../../config/ChatNodeDefault.properties";
+            propsFile = "ChatNodeDefault.properties";
         }
 
         (new ChatNode(propsFile)).run();

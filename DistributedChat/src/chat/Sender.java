@@ -51,10 +51,9 @@ public class Sender extends Thread {
 	            	// send message
 	            	toReceiver.writeObject(message);
 	            	
-	            	ArrayList receivedMessage = (ArrayList)fromReceiver.readObject();
+	            	ArrayList receivedList = (ArrayList)fromReceiver.readObject();
 	            	
-	            	ChatNode.nodeList = receivedMessage;
-	            	ChatNode.nodeList.add(myNode);
+	            	ChatNode.nodeList = receivedList;
 	            	// TODO: Tell everyone to update their ArrayList w/ this Node
 	            	
 	            	System.out.println("Joined chat.");
@@ -125,4 +124,32 @@ public class Sender extends Thread {
             }
         }
     }
+
+   public void update(NodeInfo newNode)
+      {
+         ObjectOutputStream toReceiver;
+         ObjectInputStream fromReceiver;
+         Message message = new Message(MessageType.JOIN, newNode);
+         
+         // TODO Auto-generated method stub
+         for(NodeInfo node : ChatNode.nodeList) {
+            if(myIP != node.ip) {
+               try
+               {
+                  Socket socket = new Socket(myIP, myPort);
+                  toReceiver = new ObjectOutputStream( socket.getOutputStream() );
+                  fromReceiver = new ObjectInputStream( socket.getInputStream() );
+               
+                     // send leave
+                     toReceiver.writeObject(message);
+                     
+                     socket.close();
+               }
+               catch(IOException e) 
+               {
+                  System.err.println("Something broke :/");
+               }
+            }
+         }
+      }
 }
