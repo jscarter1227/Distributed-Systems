@@ -16,9 +16,9 @@ public class ReceiverWorker extends Thread {
     Message message = null;
     NodeInfo me = null;
     
-	public ReceiverWorker(Socket socket, NodeInfo myNode)
+	public ReceiverWorker(Socket socket)
 	{
-		me = myNode;
+		//me = myNode;
 		connection = socket;
 		try
 		{
@@ -27,7 +27,7 @@ public class ReceiverWorker extends Thread {
 		}
 		catch(IOException ex)
 		{
-			System.err.println("Message unable to read.");
+			System.err.println("Error with object stream..");
 			System.exit(1);
 		}
 	}
@@ -40,8 +40,10 @@ public class ReceiverWorker extends Thread {
 		}
 		catch(Exception ex)
 		{
-			System.err.println("Message unable to read.");
+			System.err.println("Error with converting readFromNet to object");
 		}
+		
+		System.out.println(message.type);
 		
 		if(message.type == MessageType.JOIN)
 		{

@@ -8,20 +8,21 @@ import java.util.logging.Logger;
 
 public class Receiver extends Thread implements Serializable {
 	
-  static ServerSocket receiverSocket = null;
+  public static ServerSocket receiverSocket = null;
   static String userName = null;
   static NodeInfo me;
 
   public Receiver(NodeInfo myNodeAddress) {
     try
     {
-      me = myNodeAddress;
-      receiverSocket = new ServerSocket(myNodeAddress.getPort());
-      System.out.println("[Receiver.Receiver] receiver socket created, listening on port " + myNodeAddress.getPort());
+        me = myNodeAddress;
+        System.out.println(myNodeAddress.getPort());
+        receiverSocket = new ServerSocket(myNodeAddress.getPort());
+        System.out.println("[Receiver.Receiver] receiver socket created, listening on port " + myNodeAddress.getPort());
     }
     catch (IOException ex)
     {
-    	Logger.getLogger(Receiver.class.getName()).log(Level.SEVERE, "Error!");
+    	Logger.getLogger(Receiver.class.getName()).log(Level.SEVERE, "Error with creating port");
     }
   }
 
@@ -32,7 +33,7 @@ public class Receiver extends Thread implements Serializable {
 	  {
 	    try
 	    {
-	      (new ReceiverWorker(receiverSocket.accept(), me)).start();
+	      (new ReceiverWorker(receiverSocket.accept())).start();
 	    }
 	    catch(IOException e) 
 	    {

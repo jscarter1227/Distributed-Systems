@@ -87,14 +87,13 @@ public class ChatNode
     public static void main(String[] args) throws IOException
     {
         String propsFile = null;
-
         try 
         {
             propsFile = args[0];
         }
         catch (ArrayIndexOutOfBoundsException exception)
         {
-            propsFile = "ChatNodeDefault.properties";
+            propsFile = "C:\\Users\\nerd4\\Documents\\cs465\\New folder\\Distributed-Systems\\DistributedChat\\config\\ChatNodeDefault.properties";
         }
 
         (new ChatNode(propsFile)).run();

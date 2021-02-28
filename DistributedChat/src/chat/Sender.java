@@ -39,20 +39,34 @@ public class Sender extends Thread {
 
             if(inputLine.startsWith("JOIN"))
             {
+                String[] connectivityInfo = inputLine.split(" ");
+                String joinAddress = null;
+                int joinPort = 0;
+
+                try
+                {
+                    joinAddress = connectivityInfo[1];
+                    joinPort = Integer.parseInt(connectivityInfo[2]);
+                }
+                catch(ArrayIndexOutOfBoundsException ex)
+                {
+                	System.out.println("Gameboy Advance");
+                }
+                
             	try 
             	{
-	            	Socket socket = new Socket(myIP, myPort);
+	            	Socket socket = new Socket(joinAddress, joinPort);
 	            	toReceiver = new ObjectOutputStream(socket.getOutputStream());
 	            	fromReceiver = new ObjectInputStream(socket.getInputStream());
-	            	
+
 	            	// create join message
 	            	Message message = new Message(MessageType.JOIN, myNode);
-	            	
+
 	            	// send message
 	            	toReceiver.writeObject(message);
-	            	
+
 	            	ArrayList receivedList = (ArrayList)fromReceiver.readObject();
-	            	
+
 	            	ChatNode.nodeList = receivedList;
 	            	// TODO: Tell everyone to update their ArrayList w/ this Node
 	            	
@@ -64,7 +78,7 @@ public class Sender extends Thread {
             	} 
             	catch (ClassNotFoundException e) 
             	{
-            		System.err.println("Failed to join chat.");
+            		System.err.println("Nintendo DS.");
 				}
             }
             else if(inputLine.startsWith("LEAVE"))
