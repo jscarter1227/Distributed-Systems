@@ -10,8 +10,8 @@ import java.util.logging.Logger;
 import java.util.logging.*; 
 
 public class Sender extends Thread {
-    Scanner userInput = new Scanner(System.in);
     String inputLine = null;
+    Scanner userInput;
     int myPort = 0;
     String myIP =  null;
     NodeInfo myNode;
@@ -19,7 +19,6 @@ public class Sender extends Thread {
 
     public Sender(NodeInfo me)
     {
-        userInput = new Scanner(System.in);
         hasJoined = false;
         myPort = me.getPort();
         myIP = me.getAddress();
@@ -34,6 +33,8 @@ public class Sender extends Thread {
 
         while(true)
         {
+        	inputLine = null;
+        	userInput = new Scanner(System.in);
             inputLine = userInput.nextLine();
 
             if(inputLine.startsWith("JOIN"))
@@ -59,16 +60,19 @@ public class Sender extends Thread {
 	            	fromReceiver = new ObjectInputStream(socket.getInputStream());
 	            	toReceiver.flush();
 	            	// create join message
-	            	System.out.println(myNode.getName());
+
 	            	Message message = new Message(1, myNode);
 	            	// send message
 	            	toReceiver.writeObject(message);
 	            	toReceiver.flush();
-	            	ArrayList receivedList = (ArrayList)fromReceiver.readObject();
-	            	ChatNode.nodeList = receivedList;
-//	            	// TODO: Tell everyone to update their ArrayList w/ this Node
 	            	
+	            	// retrieve list
+	            	ArrayList<NodeInfo> receivedList = (ArrayList<NodeInfo>)fromReceiver.readObject();
+	            	ChatNode.nodeList.addAll(receivedList);           	
 	            	System.out.println("Joined chat.");
+	            	
+	            	toReceiver.close();
+	            	fromReceiver.close();
 	            	socket.close();
             	}
             	catch(IOException e) {
@@ -77,31 +81,29 @@ public class Sender extends Thread {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} 
-
             }
-            else if(inputLine.startsWith("LEAVE"))
+            else if(inputLine.startsWith("LEAVE") || inputLine.startsWith("SHUTDOWN"))
             {
             	// create leave message	
             	Message message = new Message(2, myNode);
             	
             	for(NodeInfo node : ChatNode.nodeList) {
-            		if(myIP != node.ip) {
-            			try
-            			{
-            				Socket socket = new Socket(myIP, myPort);
-            				toReceiver = new ObjectOutputStream( socket.getOutputStream() );
-    						fromReceiver = new ObjectInputStream( socket.getInputStream() );
-    						
-    						// send leave
-    						toReceiver.writeObject(message);
-    						
-    						socket.close();
-            			}
-            			catch(IOException e) 
-            			{
-            				System.err.println("Something broke :/");
-            			}
-            		}
+        			try
+        			{
+        				Socket socket = new Socket(node.getAddress(), node.getPort());
+        				toReceiver = new ObjectOutputStream( socket.getOutputStream() );
+						
+						// send leave
+						toReceiver.writeObject(message);
+						toReceiver.flush();
+						toReceiver.close();
+						socket.close();
+        			}
+        			catch(IOException e) 
+        			{
+        				System.err.println("Something broke :/");
+        			}
+
             	}
             	
             	System.out.println("Disconnected.");
@@ -114,54 +116,27 @@ public class Sender extends Thread {
 				Message message = new Message(messageBuilder);
 				
             	for(NodeInfo node : ChatNode.nodeList) {
-            		if(myIP != node.ip) {
-            			try
-            			{
-            				Socket socket = new Socket(myIP, myPort);
-            				toReceiver = new ObjectOutputStream( socket.getOutputStream() );
-    						fromReceiver = new ObjectInputStream( socket.getInputStream() );
-    						
-    						// send leave
-    						toReceiver.writeObject(message);
-    						
-    						socket.close();
-            			}
-            			catch(IOException e) 
-            			{
-            				System.err.println("Something broke :/");
-            			}
+            		if(myNode.ip != node.ip)
+            		{
+	        			try
+	        			{
+	        				Socket socket = new Socket(node.getAddress(), node.getPort());
+	        				toReceiver = new ObjectOutputStream( socket.getOutputStream() );
+							// send leave
+							toReceiver.writeObject(message);
+							toReceiver.flush();
+							toReceiver.close();
+							socket.close();
+	        			}
+	        			catch(IOException e) 
+	        			{
+	        				System.err.println("Something broke :/");
+	        			}
             		}
             	}
-            	//System.out.println(myNode.name + ": " + inputLine);
+            	System.out.println(myNode.name + ": " + inputLine);
             }
         }
     }
 
-   public void update(NodeInfo newNode)
-      {
-         ObjectOutputStream toReceiver;
-         ObjectInputStream fromReceiver;
-         Message message = new Message(1, newNode);
-         
-         // TODO Auto-generated method stub
-         for(NodeInfo node : ChatNode.nodeList) {
-            if(myIP != node.ip) {
-               try
-               {
-                  Socket socket = new Socket(node.getAddress(), node.getPort());
-                  toReceiver = new ObjectOutputStream( socket.getOutputStream() );
-                  fromReceiver = new ObjectInputStream( socket.getInputStream() );
-               
-                     // send leave
-                     toReceiver.writeObject(message);
-                     
-                     socket.close();
-               }
-               catch(IOException e) 
-               {
-                  System.err.println("Something broke :/");
-               }
-            }
-         }
-      }
 }
