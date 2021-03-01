@@ -16,6 +16,7 @@ public class Receiver extends Thread implements Serializable {
     try
     {
         me = myNodeAddress;
+        // Create port
         System.out.println(myNodeAddress.getPort());
         receiverSocket = new ServerSocket(myNodeAddress.getPort());
         System.out.println("[Receiver.Receiver] receiver socket created, listening on port " + myNodeAddress.getPort());
@@ -33,6 +34,7 @@ public class Receiver extends Thread implements Serializable {
 	  {
 	    try
 	    {
+	    	// Create new worker thread
 	      (new ReceiverWorker(receiverSocket.accept())).start();
 	    }
 	    catch(IOException e) 

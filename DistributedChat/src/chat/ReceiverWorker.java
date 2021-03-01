@@ -36,6 +36,8 @@ public class ReceiverWorker extends Thread {
 	{	   
 		try
 		{
+			// Read message from input stream
+			// Problem - why do multiple of the same objects send?
 			message = (Message) readFromNet.readObject();
 		}
 		catch(ClassNotFoundException ex)
@@ -45,9 +47,10 @@ public class ReceiverWorker extends Thread {
 			System.err.println("IO Exception in recieverworker");
 		}
 		
+		// Check type of message before operations
 		if(message.getType() == 1)
 		{
-			// Add node w/ IP
+			// Add node
 			// Print join message as well
 	        System.out.println(message.getNode().getName() + ": has joined");
 	        
@@ -64,8 +67,8 @@ public class ReceiverWorker extends Thread {
 		}
 		else if(message.getType() == 2) 
 		{
-			// Remove node w/ IP
-			// Print left message as well
+		  // Remove node w/ IP
+		  // Print left message as well
 	      ChatNode.nodeList.remove(message.getNode());
           System.out.println(message.getNode().getName() + ": has left");
 
