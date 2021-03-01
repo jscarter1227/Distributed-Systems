@@ -6,7 +6,6 @@ import java.util.*;
 import java.util.logging.Level; 
 import java.util.logging.Logger;
 
-import chat.Message.MessageType;
 
 import java.util.logging.*; 
 
@@ -50,7 +49,7 @@ public class Sender extends Thread {
                 }
                 catch(ArrayIndexOutOfBoundsException ex)
                 {
-                	System.out.println("Gameboy Advance");
+                	System.out.println("ArrayIndexOutOfBoundsException");
                 }
                 
             	try 
@@ -58,33 +57,32 @@ public class Sender extends Thread {
 	            	Socket socket = new Socket(joinAddress, joinPort);
 	            	toReceiver = new ObjectOutputStream(socket.getOutputStream());
 	            	fromReceiver = new ObjectInputStream(socket.getInputStream());
-
+	            	toReceiver.flush();
 	            	// create join message
-	            	Message message = new Message(MessageType.JOIN, myNode);
-
+	            	System.out.println(myNode.getName());
+	            	Message message = new Message(1, myNode);
 	            	// send message
 	            	toReceiver.writeObject(message);
-
+	            	toReceiver.flush();
 	            	ArrayList receivedList = (ArrayList)fromReceiver.readObject();
-
 	            	ChatNode.nodeList = receivedList;
-	            	// TODO: Tell everyone to update their ArrayList w/ this Node
+//	            	// TODO: Tell everyone to update their ArrayList w/ this Node
 	            	
 	            	System.out.println("Joined chat.");
 	            	socket.close();
             	}
             	catch(IOException e) {
             		System.err.println("Failed to join chat.");
-            	} 
-            	catch (ClassNotFoundException e) 
-            	{
-            		System.err.println("Nintendo DS.");
-				}
+            	} catch (ClassNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} 
+
             }
             else if(inputLine.startsWith("LEAVE"))
             {
             	// create leave message	
-            	Message message = new Message(MessageType.LEAVE, myNode);
+            	Message message = new Message(2, myNode);
             	
             	for(NodeInfo node : ChatNode.nodeList) {
             		if(myIP != node.ip) {
@@ -134,7 +132,7 @@ public class Sender extends Thread {
             			}
             		}
             	}
-            	System.out.println(myNode.name + ": " + inputLine);
+            	//System.out.println(myNode.name + ": " + inputLine);
             }
         }
     }
@@ -143,14 +141,14 @@ public class Sender extends Thread {
       {
          ObjectOutputStream toReceiver;
          ObjectInputStream fromReceiver;
-         Message message = new Message(MessageType.JOIN, newNode);
+         Message message = new Message(1, newNode);
          
          // TODO Auto-generated method stub
          for(NodeInfo node : ChatNode.nodeList) {
             if(myIP != node.ip) {
                try
                {
-                  Socket socket = new Socket(myIP, myPort);
+                  Socket socket = new Socket(node.getAddress(), node.getPort());
                   toReceiver = new ObjectOutputStream( socket.getOutputStream() );
                   fromReceiver = new ObjectInputStream( socket.getInputStream() );
                

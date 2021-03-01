@@ -6,7 +6,6 @@ import java.io.ObjectOutputStream;
 import java.net.*;
 import java.util.ArrayList;
 
-import chat.Message.MessageType;
 
 public class ReceiverWorker extends Thread {
 	Socket connection = null;
@@ -32,26 +31,28 @@ public class ReceiverWorker extends Thread {
 		}
 	}
 	
+	@Override
 	public void run()
 	{	   
 		try
 		{
-			message = (Message)readFromNet.readObject();
+			message = (Message) readFromNet.readObject();
 		}
-		catch(Exception ex)
+		catch(ClassNotFoundException ex)
 		{
 			System.err.println("Error with converting readFromNet to object");
+		} catch (IOException e) {
+			System.err.println("IO Exception in recieverworker");
 		}
+		//System.out.println(message.getNode().getName());
 		
-		System.out.println(message.type);
-		
-		if(message.type == MessageType.JOIN)
+		if(message.getType() == 1)
 		{
 			// Add node w/ IP
 			// Print join message as well
-		   ChatNode.nodeList.add(message.node);
-	      System.out.println(message.node.getName() + ": has joined");
-		   
+		    ChatNode.nodeList.add(message.getNode());
+	        System.out.println(message.getNode().getName() + ": has joined");
+	        
 	      try
 	         {
 	            writeToNet.writeObject(ChatNode.nodeList);
@@ -63,21 +64,22 @@ public class ReceiverWorker extends Thread {
 	         }
 	      
 	      // update everyone elses lists
-	      ChatNode.sender.update(message.node);
+	      ChatNode.sender.update(message.getNode());
 		}
-		else if(message.type == MessageType.LEAVE) 
+		else if(message.getType() == 2) 
 		{
 			// Remove node w/ IP
 			// Print left message as well
-	      ChatNode.nodeList.remove(message.node);
-         System.out.println(message.node.getName() + ": has left");
+	      ChatNode.nodeList.remove(message.getNode());
+          System.out.println(message.getNode().getName() + ": has left");
 
 		}
-		else if(message.type == MessageType.MESSAGE)
+		else if(message.getType() == 3)
 		{
 			// Display chat
-			System.out.println(message.message);
+			System.out.println(message.getMessage());
 		}
+
 
 	}
 

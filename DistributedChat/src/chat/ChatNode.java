@@ -12,7 +12,7 @@ import java.util.logging.*;
 
 public class ChatNode
 {
-	public static ArrayList<NodeInfo> nodeList;
+	public static ArrayList<NodeInfo> nodeList = new ArrayList<NodeInfo>();
     public static NodeInfo me = null;
 
     static Receiver receiver = null;

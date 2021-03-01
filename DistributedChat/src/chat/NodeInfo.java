@@ -1,6 +1,8 @@
 package chat;
 
-public class NodeInfo {
+import java.io.Serializable;
+
+public class NodeInfo implements Serializable {
    String name;
    String ip;
    int port;
