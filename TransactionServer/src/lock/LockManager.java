@@ -2,18 +2,28 @@ package lock;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
+import account.Account;
+import transaction.Transaction;
 
 public class LockManager {
 	
-	private Hashtable<K, V> theLocks;
+	private Hashtable<Account, Lock> locks;
 	
-	public void setLock(Object object, TransID trans, LockType lockType) {
+	public LockManager() {
+		locks = new Hashtable<>();
+	}
+	
+	public void setLock(Account account, Transaction trans, int lockType) {
 		Lock foundLock;
 		synchronized(this) {
-			// find the lock associated with obj
-			// if there isnt one, create it and add to the hash table
+			foundLock = locks.get(account);
+			
+			if(foundLock == null) {
+				foundLock = new Lock(account);
+				locks.put(account, foundLock);
+			}
 		}
-		foundLocks.acquired(trans, lockType);
+		foundLock.acquire(trans, lockType);
 	}
 	
 	public synchronized void unlock(TransID trans) {

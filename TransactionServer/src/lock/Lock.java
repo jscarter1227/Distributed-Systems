@@ -1,14 +1,23 @@
 package lock;
 
+import java.util.ArrayList;
 import java.util.Vector;
+import account.Account;
+import transaction.Transaction;
 
 public class Lock {
 	
-	private Object object;
-	private Vector<E> holders;
-	private LockType lockType;
+	private Account account;
+	private ArrayList<Transaction> locks;
+	private int lockType;
 	
-	public synchronized void acquire(TransID trans, LockType aLocktype) {
+	public Lock(Account acc) {
+		locks = new ArrayList();
+		account = acc;
+		lockType = LockType.EMPTY_LOCK;	
+	}
+	
+	public synchronized void acquire(Transaction trans, int locktype) {
 		while(/* TODO: Another transaction holds the lock in the conflicting mode*/) {
 			try {
 				wait();
