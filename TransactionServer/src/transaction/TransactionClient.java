@@ -1,65 +1,75 @@
 package transaction;
 
-import java.io.IOException;
-import java.util.Properties;
-
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.io.*;
 import java.util.*;
 
 
 public class TransactionClient extends Thread{
-	
-	public TransactionClient(Properties props) throws IOException {
-		int port = 0;
-		String IP = null;
+	int numTransactions;
+	int numAccounts;
+	int initialBalance;
+	String host;
+	int port;
+	StringBuffer log = new StringBuffer("");
+
+    // constructor
+	public TransactionClient(String properties) throws FileNotFoundException{
 		
-		port = Integer.parseInt(props.getProperty("PORT"));
-		IP = props.getProperty("IP");
-		
+		// open the properties file
+		try(InputStream propsFile = new FileInputStream(properties)){
+			
+			// create a properties object then load the file
+			Properties props = new Properties();
+			props.load(propsFile);
+
+            // get the properties for each of the varables declared above
+			numTransactions = Integer.parseInt(props.getProperty("NUM_TRANSACTIONS"));
+			numAccounts = Integer.parseInt(props.getProperty("NUM_ACCOUNTS"));
+			initialBalance = Integer.parseInt(props.getProperty("INIT_BALANCE"));
+			host = props.getProperty("HOST");
+			port = Integer.parseInt(props.getProperty("PORT"));
+		}
+
+		catch(IOException e){
+			e.printStackTrace();
+		}
 	}
-	
-	public void run() {
-		TransactionServerProxy transaction = new TransactionServerProxy(IP, port);
+}
+
+public void run(){
+	for(int i = 0; i < numTransactions; i++){
+		new Thread(){
+			public void run(){
+				TransactionServerProxy trans = new TransactionServerProxy(host, port);
+				int transID = trans.openTransaction();
+				System.out.println("Transaction #: " + transID + " started");
+
+				// account info
+				int accountFrom = (int) Math.floor(Math.random() * numAccounts);
+				int accountTo = (int) Math.floor(Math.random() * numAccounts);
+				int amount = (int) Math.ceil(Math.random() * initialBalance);
+				int balance;
+				System.out.print("\tTransaction #: " + transID + ", $" + amount + " " + accountFrom + "->" + accountTo);
+                
+				// withdraw action
+				balance = trans.read(accountFrom);
+				trans.write(accountFrom, balance - amount);
+
+				// deposit action
+				balance = trans.read(accountTo);
+				trans.write(accountTo, balance + amount);
+
+				trans.closeTransaction();
+
+				System.out.println("Transaction #: " + transID + " finished");
+
+
+			}
+		}.start();
 	}
+}
 
-	
-	public static Properties readPropertiesFile(String fileName) throws IOException {
-		//Declare file stream, properties item
-		  FileInputStream propsreader = null;
-	      Properties prop = null;
-	      //attempt to create file input stream, new properties object, and load properties into it
-	      try {
-		         propsreader = new FileInputStream(fileName);
-		         prop = new Properties();
-		         prop.load(propsreader);
-		      } 
-	      //catch file not found error
-		  catch(FileNotFoundException fileNotFound) {
-		         fileNotFound.printStackTrace();
-		      } 
-	      // catch IO error
-		  catch(IOException e) {
-		         e.printStackTrace();
-		      } 
-	      //close the Input stream
-		  finally {
-		         propsreader.close();
-		      }
-	      // return properties object
-		  return prop;
-		  }
-	
-	public static void main(String[] args) throws IOException {
-
-        // We should probably implement a file reader at some point
-		// Hard coding for now
-		Properties props = new Properties();
-		props.setProperty("IP", "localhost");
-		props.setProperty("PORT", "10000");
-
-        (new TransactionClient(props)).run();
-	}
-
+// main method to run the properties config file
+public static void main(String[] args){
+	(new TransactionClient("src/props/config.properties")).start();
 }
