@@ -17,7 +17,7 @@ public class TransactionServerProxy implements msgTypes{
 	ObjectOutputStream writeToNet = null;
 	ObjectInputStream readFromNet = null;
 	int transactionID = 0;
-	int balance = 0;
+	//int balance = 0;
 	
 	TransactionServerProxy(String incHost, int incPort) {
 		host = incHost;
@@ -40,8 +40,11 @@ public class TransactionServerProxy implements msgTypes{
 
 		//Implement Read/WriteFromNet here to create new object
 		try{
+			connection = new Socket(host,port);
+			writeToNet = new ObjectOutputStream(connection.getOutputStream());
+			readFromNet = new ObjectInputStream(connection.getInputStream());
 			writeToNet.writeObject(openTransaction);
-			transactionID = (int)readFromNet.readObject();
+			transactionID = (Integer)readFromNet.readObject();
 		}
 		catch(IOException e){
 			e.printStackTrace();
@@ -59,9 +62,9 @@ public class TransactionServerProxy implements msgTypes{
 		// Close all streams at the end of transaction
 		try {
 			writeToNet.writeObject(closeTransaction);
-			//writeToNet.close();
-			//readFromNet.close();
-			//connection.close();
+			writeToNet.close();
+			readFromNet.close();
+			connection.close();
 		} catch (IOException e) {
 			System.err.println("Error closing tranasaction");
 		}
@@ -70,6 +73,7 @@ public class TransactionServerProxy implements msgTypes{
 
 	public int read(int accountNumber) {
 		Message readMsg = new Message(READ_REQUEST, accountNumber);
+		Integer balance = null;
 		try{
 			// Reads transaction
 			writeToNet.writeObject(readMsg);
@@ -79,7 +83,7 @@ public class TransactionServerProxy implements msgTypes{
 		}
 		catch(Exception e){
 			System.out.println("Server proxy read function error");
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 
 		// Returns balance
@@ -88,7 +92,7 @@ public class TransactionServerProxy implements msgTypes{
 	
 	public int write(int accountNumber, int amount) {
 		Message writeMsg = new Message(WRITE_REQUEST, accountNumber, amount);
-
+		Integer balance = null;
 		try{
 			// creates new transaction message
 			writeToNet.writeObject(writeMsg);

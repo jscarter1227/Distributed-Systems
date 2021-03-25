@@ -5,8 +5,8 @@ public class Account {
 	int accountNum;
 	int balance;
 	
-	public Account(String incName, int incAccountNumber, int incInitialBalance) {
-		name = incName;
+	public Account(int incAccountNumber, int incInitialBalance) {
+		// name = incName; // dont think name is needed?
 		accountNum = incAccountNumber;
 		balance = incInitialBalance;
 		
@@ -17,7 +17,7 @@ public class Account {
 		return balance;
 	}
 	
-	// Gets the number of the ccount
+	// Gets the number of the account
 	public int getAccountNum() {
 		return accountNum;
 	}

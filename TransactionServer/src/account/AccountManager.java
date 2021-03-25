@@ -8,10 +8,18 @@ import lock.LockType;
 import lock.Lock;
 
 public class AccountManager {
-	ArrayList<Account> accountList;
+	static ArrayList<Account> accountList;
+	static int numAccounts;
+	static int initialBalance;
 	
-	public AccountManager(int numberAccounts, int initialBalance) {
+	public AccountManager(int numberAccounts, int initBalance) {
 		accountList = new ArrayList();
+		numAccounts = numberAccounts;
+		initialBalance = initBalance;
+		
+		for(int i = 0; i < numAccounts; i++) {
+			accountList.add(new Account(i, initialBalance));
+		}
 		
 	}
 	
@@ -20,7 +28,7 @@ public class AccountManager {
 		Account account = getAccount(accountNumber);
 		
 		// set the write lock
-		(TransactionServer.lockManager).lock(account, transaction, LockType.WRITE_LOCK);
+		(TransactionServer.lockManager).setLock(account, transaction, LockType.WRITE_LOCK);
 		
 		// above call may wait or deadlock until it continues here
 		account.setBalance(balance);
@@ -35,7 +43,7 @@ public class AccountManager {
 		// get account
 		Account account = getAccount(accountNumber);
 		
-		(TransactionServer.lockManager).lock(account, transaction, LockType.READ_LOCK);
+		(TransactionServer.lockManager).setLock(account, transaction, LockType.READ_LOCK);
 		
 		return (getAccount(accountNumber)).getBalance();
 	}

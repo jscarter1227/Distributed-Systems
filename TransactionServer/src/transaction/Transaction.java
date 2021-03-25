@@ -22,7 +22,7 @@ public class Transaction {
 	}
 	
 	public void addLock(Lock lock) {
-		lock.add(lock);
+		locks.add(lock);
 	}
 
 	public void log(String logString) {

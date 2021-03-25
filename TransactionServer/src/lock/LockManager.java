@@ -1,16 +1,18 @@
 package lock;
 
 import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.*;
 import account.Account;
 import transaction.Transaction;
 
-public class LockManager {
+public class LockManager implements LockType{
 	
-	private Hashtable<Account, Lock> locks;
+	private HashMap<Account, Lock> locks;
+	private static boolean toLock;
 	
-	public LockManager() {
-		locks = new Hashtable<>();
+	public LockManager(boolean toLock) {
+		locks = new HashMap<>();
+		this.toLock = toLock;
 	}
 	
 	public void setLock(Account account, Transaction trans, int lockType) {
@@ -26,13 +28,13 @@ public class LockManager {
 		foundLock.acquire(trans, lockType);
 	}
 	
-	public synchronized void unlock(TransID trans) {
-		Enumeration<E> e = theLocks.elements();
-		while(e.hasMoreElements()) {
-			Lock aLock = (Lock)(e.nextElement());
-			if(/* trans is a holder of this lock*/) {
-				aLock.release(trans);
-			}
+	public synchronized void unlock(Transaction trans) {
+		Iterator<Lock> lockIterator = trans.getLocks().listIterator();
+		Lock currentLock;
+		
+		while(lockIterator.hasNext()) {
+			currentLock = lockIterator.next();
+			currentLock.release(trans);
 		}
 	}
 

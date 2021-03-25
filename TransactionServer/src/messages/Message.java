@@ -2,7 +2,7 @@ package messages;
 
 import java.io.*;
 
-public class Message implements msgTypes {
+public class Message implements msgTypes, Serializable {
     public int type;
     public int amount;
     public int accNumber; // account number
