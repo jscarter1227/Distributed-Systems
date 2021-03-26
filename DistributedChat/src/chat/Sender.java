@@ -67,7 +67,7 @@ public class Sender extends Thread {
 	            	toReceiver.flush();
 	            	
 	            	// create join message
-	            	Message message = new Message(1, myNode);
+	            	Message message = new Message("JOIN", myNode);
 	            	
 	            	// send message
 	            	toReceiver.writeObject(message);
@@ -93,7 +93,7 @@ public class Sender extends Thread {
             else if(inputLine.startsWith("LEAVE") || inputLine.startsWith("SHUTDOWN"))
             {
             	// create leave message	
-            	Message message = new Message(2, myNode);
+            	Message message = new Message("LEAVE", myNode);
             	
             	// Loop to go through nodeList to send leave message (theoretically works) 
             	for(NodeInfo node : ChatNode.nodeList) {
@@ -123,7 +123,7 @@ public class Sender extends Thread {
             {
             	// Create message
             	String messageBuilder = myNode.name + ": " + inputLine;
-				Message message = new Message(messageBuilder);
+				Message message = new Message(messageBuilder, myNode);
 				
 				// Loop to go through nodeList to send message
             	for(NodeInfo node : ChatNode.nodeList) {

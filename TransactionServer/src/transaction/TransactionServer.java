@@ -56,7 +56,9 @@ public class TransactionServer extends Thread {
 	public void run() {
 		while(true) {
 			try {
+				//System.out.println("Waiting for socket connection");
 				transactionManager.startTransactionWorker(serverSocket.accept());
+				//System.out.println("Server socket recieved");
 			}
 			catch(IOException e)
 			{
@@ -65,7 +67,25 @@ public class TransactionServer extends Thread {
 		}
 	}
 	public static void main(String[] args) throws FileNotFoundException{
+		
 		(new TransactionServer("C:\\Users\\nerd4\\Documents\\cs465\\New folder\\Distributed-Systems\\TransactionServer\\bin\\props\\TransactionServer.properties")).start();
+		
+		try {
+			sleep(10000);
+		} catch (InterruptedException e) {
+			System.out.println("[TransactionServer] Error sleeping");
+		}
+		
+		System.out.println("======================================= DEADLOCKED ACCOUNTS INFORMATION =======================================");
+		//TODO: Print Deadlocked Accounts
+		System.out.println("===================================== DEADLOCKED TRANSACTIONS INFORMATION =====================================");
+		//TODO: Print deadlockeded accounts
+		System.out.println("================================================ BRANCH TOTAL =================================================");
+		int branchTotal = 20;
+		System.out.println("---> " + branchTotal);
+		
+		System.exit(1);
+		
 	}
 	
 

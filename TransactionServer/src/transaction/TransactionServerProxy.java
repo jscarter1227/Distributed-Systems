@@ -23,15 +23,15 @@ public class TransactionServerProxy implements msgTypes{
 		host = incHost;
 		port = incPort;
 
-		// try to make a connection
-		try{
-			connection = new Socket(host,port);
-			writeToNet = new ObjectOutputStream(connection.getOutputStream());
-			readFromNet = new ObjectInputStream(connection.getInputStream());
-		}
-		catch(IOException e){
-			e.printStackTrace();
-		}
+//		// try to make a connection
+//		try{
+//			connection = new Socket(host,port);
+//			writeToNet = new ObjectOutputStream(connection.getOutputStream());
+//			readFromNet = new ObjectInputStream(connection.getInputStream());
+//		}
+//		catch(IOException e){
+//			e.printStackTrace();
+//		}
 
 	}
 	
@@ -82,7 +82,7 @@ public class TransactionServerProxy implements msgTypes{
 			balance = (Integer) readFromNet.readObject();
 		}
 		catch(Exception e){
-			System.out.println("Server proxy read function error");
+			System.out.println("[TransactionServerProxy] read function error");
 			//e.printStackTrace();
 		}
 
@@ -101,7 +101,7 @@ public class TransactionServerProxy implements msgTypes{
 			balance = (Integer) readFromNet.readObject();
 		}
 		catch(Exception e){
-			System.out.println("Server proxy read function error");
+			System.out.println("[TransactionServerProxy] write function error");
 			e.printStackTrace();
 		}
 		// Returns balance?

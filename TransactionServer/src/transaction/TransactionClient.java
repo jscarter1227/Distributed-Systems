@@ -48,7 +48,7 @@ public class TransactionClient extends Thread{
 					int accountTo = (int) Math.floor(Math.random() * numAccounts);
 					int amount = (int) Math.ceil(Math.random() * initialBalance);
 					int balance;
-					System.out.print("\tTransaction #: " + transID + ", $" + amount + " " + accountFrom + "->" + accountTo);
+					System.out.println("\tTransaction #: " + transID + ", $" + amount + " " + accountFrom + "->" + accountTo);
 	                
 					// withdraw action
 					balance = trans.read(accountFrom);
@@ -67,7 +67,7 @@ public class TransactionClient extends Thread{
 	}
 	// main method to run the properties config file
 	public static void main(String[] args) throws FileNotFoundException{
-		(new TransactionClient("C:\\Users\\nerd4\\Documents\\cs465\\New folder\\Distributed-Systems\\TransactionServer\\bin\\props\\TransactionClient.properties")).start();
+		(new TransactionClient("C:\\Users\\nerd4\\Documents\\cs465\\New folder\\Distributed-Systems\\TransactionServer\\bin\\props\\TransactionServer.properties")).start();
 	}
 }
 

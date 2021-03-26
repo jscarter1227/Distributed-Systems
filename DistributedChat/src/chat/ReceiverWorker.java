@@ -46,12 +46,13 @@ public class ReceiverWorker extends Thread {
 		} catch (IOException e) {
 			System.err.println("IO Exception in recieverworker");
 		}
-		
+						
 		// Check type of message before operations
-		if(message.getType() == 1)
+		if(message.getMessage().equals("JOIN"))
 		{
 			// Add node
 			// Print join message as well
+		    ChatNode.nodeList.add(message.getNode());
 	        System.out.println(message.getNode().getName() + ": has joined");
 	        
 	      try
@@ -63,9 +64,9 @@ public class ReceiverWorker extends Thread {
 	            System.err.println("Message unable to read. :(");
 	            System.exit(1);
 	         }
-		    ChatNode.nodeList.add(message.getNode());
+
 		}
-		else if(message.getType() == 2) 
+		else if(message.getMessage().equals("LEAVE")) 
 		{
 		  // Remove node w/ IP
 		  // Print left message as well
@@ -73,7 +74,7 @@ public class ReceiverWorker extends Thread {
           System.out.println(message.getNode().getName() + ": has left");
 
 		}
-		else if(message.getType() == 3)
+		else
 		{
 			// Display chat
 			System.out.println(message.getMessage());
