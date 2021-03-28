@@ -30,7 +30,7 @@ public class Lock implements LockType{
 				removeLockRequestor(trans);
 			}
 			catch (InterruptedException e) {
-				
+				System.out.println("\nwe missed it");
 			}
 		}
 		
