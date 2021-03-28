@@ -2,6 +2,7 @@ package transaction;
 
 import java.io.*;
 import java.net.ServerSocket;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Properties;
@@ -72,7 +73,7 @@ public class TransactionServer extends Thread {
 	}
 	public static void main(String[] args) throws FileNotFoundException{
 		
-		(new TransactionServer("C:\\Users\\nerd4\\Documents\\cs465\\New folder\\Distributed-Systems\\TransactionServer\\bin\\props\\TransactionServer.properties")).start();
+		(new TransactionServer("C:\\Users\\joebr\\eclipse-workspace\\TransactionServer\\src\\props\\TransactionServer.properties")).start();
 		
 		try {
 			sleep(10000);
@@ -106,9 +107,29 @@ public class TransactionServer extends Thread {
     	}
 
 		System.out.println("===================================== DEADLOCKED TRANSACTIONS INFORMATION =====================================");
-		//TODO: Print deadlockeded accounts
+		// Print deadlockeded accounts
+		 Transaction transaction;
+	    ArrayList<Transaction> locked_transactions = transactionManager.getTransactions();
+	    Iterator<Transaction> transactionIterator = locked_transactions.iterator();
+	      
+	      while(transactionIterator.hasNext()) {
+	         transaction = transactionIterator.next();
+	         
+	         System.out.println("\n" + transaction.getLog());
+	      }
+
 		System.out.println("================================================ BRANCH TOTAL =================================================");
-		int branchTotal = 20;
+	     Account account;
+	     int branchTotal = 0;
+	       ArrayList<Account> accounts = accountManager.getAccounts();
+	       Iterator<Account> accountIterator = accounts.iterator();
+	         
+	         while(accountIterator.hasNext()) {
+	            account = accountIterator.next();
+	            
+	            branchTotal += account.getBalance();
+	         }
+
 		System.out.println("---> " + branchTotal);
 		
 		System.exit(1);

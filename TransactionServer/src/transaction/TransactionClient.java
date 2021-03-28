@@ -67,7 +67,7 @@ public class TransactionClient extends Thread{
 	}
 	// main method to run the properties config file
 	public static void main(String[] args) throws FileNotFoundException{
-		(new TransactionClient("C:\\Users\\nerd4\\Documents\\cs465\\New folder\\Distributed-Systems\\TransactionServer\\bin\\props\\TransactionServer.properties")).start();
+		(new TransactionClient("C:\\Users\\joebr\\eclipse-workspace\\TransactionServer\\src\\props\\TransactionServer.properties")).start();
 	}
 }
 

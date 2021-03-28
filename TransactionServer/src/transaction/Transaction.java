@@ -26,7 +26,7 @@ public class Transaction {
 	}
 
 	public void log(String logString) {
-		log.append(logString);
+		log.append("\n" + logString);
 		
 	}
 	

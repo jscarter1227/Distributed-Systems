@@ -114,7 +114,7 @@ public class TransactionManager implements msgTypes {
 						}
 						
 						transaction.log("[TransactionManagerWorker.run] READ_REQUEST <<<<<<<<<<<<<<<<<<<< account #"
-										+ accountNum + ", balance $" + "accountBalance");
+										+ accountNum + ", balance $" + accountBalance);
 						break;
 					case WRITE_REQUEST:
 						Object[] content = (Object[]) message.getAccountInfo();
