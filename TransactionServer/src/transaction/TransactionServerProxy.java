@@ -96,13 +96,14 @@ public class TransactionServerProxy implements msgTypes{
 		try{
 			// creates new transaction message
 			writeToNet.writeObject(writeMsg);
-
+			
 			// Sends transaction to server??
 			balance = (Integer) readFromNet.readObject();
+			System.out.println("Transaction #" + transactionID + " Success, recieved: " + balance);
 		}
 		catch(Exception e){
-			System.out.println("[TransactionServerProxy] write function error");
-			e.printStackTrace();
+			System.out.println("[TransactionServerProxy] #" + transactionID + " write function error");
+			//e.printStackTrace();
 		}
 		// Returns balance?
 		return balance;

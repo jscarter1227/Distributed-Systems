@@ -2,9 +2,13 @@ package transaction;
 
 import java.io.*;
 import java.net.ServerSocket;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Properties;
 
+import account.Account;
 import account.AccountManager;
+import lock.Lock;
 import lock.LockManager;
 
 public class TransactionServer extends Thread {
@@ -77,7 +81,30 @@ public class TransactionServer extends Thread {
 		}
 		
 		System.out.println("======================================= DEADLOCKED ACCOUNTS INFORMATION =======================================");
-		//TODO: Print Deadlocked Accounts
+    	Lock lock;
+    	Transaction trans;
+    	HashMap<Account, Lock> locks = lockManager.getLocksList();
+    	Iterator<Lock> lockIterator = locks.values().iterator();
+    	
+    	while(lockIterator.hasNext()) {
+    		lock = lockIterator.next();
+    		HashMap<Transaction, Object[]> lockRequestors = lock.getRequestors();
+    		if(!lockRequestors.isEmpty()) {
+    			System.out.println("Account #" + lock.getAccount().getAccountNum() + "is involved in deadlock:");
+    			Iterator<Transaction> lockedTransactions = lockRequestors.keySet().iterator();
+    			
+    			while(lockedTransactions.hasNext()) {
+    				trans = lockedTransactions.next();
+    				Object[] lockInfo = lockRequestors.get(trans);
+    				int[] lockTypes = (int[]) lockInfo[0];
+    				String lockHolders = (String) lockInfo[1];
+    				
+    				System.out.println("\tTransaction #" + trans.getID() + " trying to set " + Lock.getLockType(lockTypes[1]) + ", waiting for release of " + Lock.getLockType(lockTypes[0]) +
+    									", held by transaction(s)" + lockHolders);
+    			}
+    		}
+    	}
+
 		System.out.println("===================================== DEADLOCKED TRANSACTIONS INFORMATION =====================================");
 		//TODO: Print deadlockeded accounts
 		System.out.println("================================================ BRANCH TOTAL =================================================");

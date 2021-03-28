@@ -37,5 +37,9 @@ public class LockManager implements LockType{
 			currentLock.release(trans);
 		}
 	}
+	
+	public HashMap<Account, Lock> getLocksList() {
+		return locks;
+	}
 
 }

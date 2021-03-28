@@ -32,6 +32,7 @@ public class TransactionManager implements msgTypes {
 		ObjectInputStream readFromNet = null;
 		ObjectOutputStream writeToNet = null;
 		Message message = null;
+		boolean running = true;
 		
 		Transaction transaction = null;
 		int accountNum = 0;
@@ -45,22 +46,23 @@ public class TransactionManager implements msgTypes {
 				writeToNet = new ObjectOutputStream(client.getOutputStream());
 			}
 			catch(IOException e) {
+				System.out.println("ERROR OPENING STREAMS");
 				System.exit(1);
 			}
 		}
 		
 		public void run() {
-			while(true) {
+			while(running) {
 				try {
 					message = (Message) readFromNet.readObject();
 				}
 				catch(IOException e) {
+					System.out.println("[TransactionManager] IOException receiving message");
 					System.exit(1);
 				} catch (ClassNotFoundException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
 				switch(message.getType()) {
 					case OPEN_TRANSACTION:
 						synchronized(transactionList) {
@@ -84,6 +86,7 @@ public class TransactionManager implements msgTypes {
 						
 						// Close all open sockets, ect
 						try {
+							running = false;
 							readFromNet.close();
 							writeToNet.close();
 							client.close();
@@ -117,10 +120,12 @@ public class TransactionManager implements msgTypes {
 						Object[] content = (Object[]) message.getAccountInfo();
 						accountNum = (Integer) content[0];
 						accountBalance = (Integer) content[1];
+						
+						// These variables populated (sometimes) (Tested)
 						transaction.log("[TransactionManagerWorker.run] WRITE_REQUEST >>>>>>>>>>>>>>>>>>>> account #"
 										+ accountNum + ", new balance $" + accountBalance);	
 						accountBalance = TransactionServer.accountManager.write(accountNum, transaction, accountBalance);
-						
+
 						try {
 							writeToNet.writeObject((Integer) accountBalance);
 						}
