@@ -38,6 +38,10 @@ public class AccountManager {
 	private Account getAccount(int accountNumber) {
 		return accountList.get(accountNumber);
 	}
+	
+   public ArrayList<Account> getAccounts() { 
+      return accountList;
+   }
 
 	public int read(int accountNumber, Transaction transaction) {
 		// get account

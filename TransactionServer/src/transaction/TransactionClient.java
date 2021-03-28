@@ -14,10 +14,10 @@ public class TransactionClient extends Thread{
 
     // constructor
 	public TransactionClient(String properties) throws FileNotFoundException{
-		
+
 		// open the properties file
 		try(InputStream propsFile = new FileInputStream(properties)){
-			
+
 			// create a properties object then load the file
 			Properties props = new Properties();
 			props.load(propsFile);
@@ -42,24 +42,24 @@ public class TransactionClient extends Thread{
 					TransactionServerProxy trans = new TransactionServerProxy(host, port);
 					int transID = trans.openTransaction();
 					System.out.println("Transaction #: " + transID + " started");
-	
+
 					// account info
 					int accountFrom = (int) Math.floor(Math.random() * numAccounts);
 					int accountTo = (int) Math.floor(Math.random() * numAccounts);
 					int amount = (int) Math.ceil(Math.random() * initialBalance);
 					int balance;
 					System.out.println("\tTransaction #: " + transID + ", $" + amount + " " + accountFrom + "->" + accountTo);
-	                
+
 					// withdraw action
 					balance = trans.read(accountFrom);
 					trans.write(accountFrom, balance - amount);
-	
+
 					// deposit action
 					balance = trans.read(accountTo);
 					trans.write(accountTo, balance + amount);
-	
+
 					trans.closeTransaction();
-	
+
 					System.out.println("Transaction #: " + transID + " finished");
 				}
 			}.start();
@@ -70,5 +70,3 @@ public class TransactionClient extends Thread{
 		(new TransactionClient("C:\\Users\\Travis\\Documents\\Github\\Distributed-Systems\\TransactionServer\\bin\\props\\TransactionServer.properties")).start();
 	}
 }
-
-
