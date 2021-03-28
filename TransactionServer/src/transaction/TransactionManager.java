@@ -11,6 +11,7 @@ import lock.*;
 
 public class TransactionManager implements msgTypes {
 
+	//Initialize Variables for transaction count, list of transactions
 	private static int numTransactions;
 	private static ArrayList<Transaction> transactionList;
 	
@@ -19,15 +20,18 @@ public class TransactionManager implements msgTypes {
 		transactionList = new ArrayList();
 	}
 	
+	//Obtain list of transactions
 	public ArrayList<Transaction> getTransactions() { 
 		return transactionList;
 	}
 	
+	// Open a socket for a given transaction
 	public void startTransactionWorker(Socket socket) {
 		(new TransactionManagerWorker(socket)).start();
 	}
 	
 	public class TransactionManagerWorker extends Thread {
+		//Init variables for client, r/w object streams, messages and run status
 		Socket client = null;
 		ObjectInputStream readFromNet = null;
 		ObjectOutputStream writeToNet = null;
@@ -54,25 +58,31 @@ public class TransactionManager implements msgTypes {
 		public void run() {
 			while(running) {
 				try {
+					// Try reading message from data stream
 					message = (Message) readFromNet.readObject();
 				}
+				// Catch IO Exception, report error receiving message
 				catch(IOException e) {
 					System.out.println("[TransactionManager] IOException receiving message");
 					System.exit(1);
 				} catch (ClassNotFoundException e) {
-					// TODO Auto-generated catch block
+					// Print stack trace if class not found
 					e.printStackTrace();
 				}
 				switch(message.getType()) {
+				// CASE: Open transaction
 					case OPEN_TRANSACTION:
 						synchronized(transactionList) {
+							//Add to number of transactions
 							transaction = new Transaction(numTransactions++);
+							//add new transaction to transaction list
 							transactionList.add(transaction);
 						}
-						
+						//Try to write transaction ID to the data stream
 						try {
 							writeToNet.writeObject(transaction.getID());
 						}
+						//if cannot write, give IOException for failing to open properly
 						catch(IOException e) {
 							System.err.println("[TransactionManagerWorker.run] ERROR: In Open Transaction");
 						}
@@ -84,7 +94,7 @@ public class TransactionManager implements msgTypes {
 						TransactionServer.lockManager.unlock(transaction);
 						transactionList.remove(transaction);
 						
-						// Close all open sockets, ect
+						// Close all open sockets
 						try {
 							running = false;
 							readFromNet.close();

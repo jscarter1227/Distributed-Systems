@@ -72,7 +72,7 @@ public class TransactionServer extends Thread {
 	}
 	public static void main(String[] args) throws FileNotFoundException{
 		
-		(new TransactionServer("C:\\Users\\nerd4\\Documents\\cs465\\New folder\\Distributed-Systems\\TransactionServer\\bin\\props\\TransactionServer.properties")).start();
+		(new TransactionServer("C:\\Users\\Travis\\Documents\\Github\\Distributed-Systems\\TransactionServer\\bin\\props\\TransactionServer.properties")).start();
 		
 		try {
 			sleep(10000);
