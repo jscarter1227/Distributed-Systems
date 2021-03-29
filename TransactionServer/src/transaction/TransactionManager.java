@@ -101,24 +101,29 @@ public class TransactionManager implements msgTypes {
 							writeToNet.close();
 							client.close();
 						}
+						//if cannot close connection, return IO Exception
 						catch(IOException e) {
 							System.out.println("[TransactionManagerWorker.run] Error upon close");
 						}
-						
+						//log transaction closure
 						transaction.log("[TransactionManagerWorker.run] CLOSE_TRANSACTION #" + transaction.getID());
-						
+						//get logs if applicable
 						if(TransactionServer.transactionView) {
 							System.out.println(transaction.getLog());
 						}
 						break;
 					case READ_REQUEST:
+						//get account number, log read request from account number
 						accountNum = message.accNumber;
 						transaction.log("[TransactionManagerWorker.run] READ_REQUEST >>>>>>>>>>>>>>>>>>>> account #" + accountNum);
+						//read balance
 						accountBalance = TransactionServer.accountManager.read(accountNum, transaction);
 						
+						//try writing balance to the stream
 						try {
 							writeToNet.writeObject((Integer) accountBalance); 
 						}
+						//if failed to write, give IO error report
 						catch(IOException e) {
 							System.err.println("[TransactionManagerWorker.run] READ_REQUEST - Error writing balance");
 						}
@@ -128,16 +133,19 @@ public class TransactionManager implements msgTypes {
 						break;
 					case WRITE_REQUEST:
 						Object[] content = (Object[]) message.getAccountInfo();
+						//make content object, fill it with account num and balance
 						accountNum = (Integer) content[0];
 						accountBalance = (Integer) content[1];
 						
 						// These variables populated (sometimes) (Tested)
 						transaction.log("[TransactionManagerWorker.run] WRITE_REQUEST >>>>>>>>>>>>>>>>>>>> account #"
 										+ accountNum + ", new balance $" + accountBalance);	
+						//Write account balance 
 						accountBalance = TransactionServer.accountManager.write(accountNum, transaction, accountBalance);
-
+						//attempt to write to data stream
 						try {
 							writeToNet.writeObject((Integer) accountBalance);
+						//if failed to write, print IO exception error log
 						}
 						catch(IOException e) {
 							System.err.println("[TransactionManagerWorker.run] Error writing to net");

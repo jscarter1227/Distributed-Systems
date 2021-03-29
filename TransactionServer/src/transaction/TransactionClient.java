@@ -5,6 +5,7 @@ import java.util.*;
 
 
 public class TransactionClient extends Thread{
+	//initialize variables
 	int numTransactions;
 	int numAccounts;
 	int initialBalance;
@@ -12,7 +13,7 @@ public class TransactionClient extends Thread{
 	int port;
 	StringBuffer log = new StringBuffer("");
 
-    // constructor
+	// constructor
 	public TransactionClient(String properties) throws FileNotFoundException{
 
 		// open the properties file
@@ -22,14 +23,15 @@ public class TransactionClient extends Thread{
 			Properties props = new Properties();
 			props.load(propsFile);
 
-            // get the properties for each of the varables declared above
+			// get the properties for each of the varables declared above
 			numTransactions = Integer.parseInt(props.getProperty("NUMBER_TRANSACTIONS"));
 			numAccounts = Integer.parseInt(props.getProperty("NUMBER_ACCOUNTS"));
 			initialBalance = Integer.parseInt(props.getProperty("INITIAL_BALANCE"));
 			host = props.getProperty("HOST");
 			port = Integer.parseInt(props.getProperty("PORT"));
 		}
-
+		
+		// if IO fails, print stack trace for error
 		catch(IOException e){
 			e.printStackTrace();
 		}
@@ -40,7 +42,9 @@ public class TransactionClient extends Thread{
 			new Thread() {
 				public void run() {
 					TransactionServerProxy trans = new TransactionServerProxy(host, port);
+					// open transaction, set transaction ID
 					int transID = trans.openTransaction();
+					//display tID
 					System.out.println("Transaction #: " + transID + " started");
 
 					// account info
@@ -58,8 +62,10 @@ public class TransactionClient extends Thread{
 					balance = trans.read(accountTo);
 					trans.write(accountTo, balance + amount);
 
+					
+					//close transaction when done
 					trans.closeTransaction();
-
+					//display transaction completion
 					System.out.println("Transaction #: " + transID + " finished");
 				}
 			}.start();

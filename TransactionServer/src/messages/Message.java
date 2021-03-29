@@ -3,6 +3,7 @@ package messages;
 import java.io.*;
 
 public class Message implements msgTypes, Serializable {
+	//initialize type, amount and account number
     public int type;
     public int amount;
     public int accNumber; // account number
@@ -27,15 +28,18 @@ public class Message implements msgTypes, Serializable {
         this.accNumber = 0;
         this.type = type;
     }
-
+    
+    // get message type
     public int getType(){
         return this.type;
     }
-
+    
+    // get account number 
     public int getAccountNumber(){
         return this.accNumber;
     }
-
+    
+    // get account info
     public Object[] getAccountInfo(){
         Object[] accountInfo = {accNumber, amount};
         return accountInfo;

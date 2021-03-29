@@ -85,10 +85,10 @@ public class Sender extends Thread {
 	            	socket.close();
             	}
             	catch(IOException e) {
-            		System.err.println("Failed to join chat.");
-            	} catch (ClassNotFoundException e) {
-            		System.err.println("Failed to join chat.");
-				} 
+                    System.err.println("Failed to join chat.");
+                } catch (ClassNotFoundException e) {
+                    System.err.println("Failed to join chat.");
+                } 
             }
             else if(inputLine.startsWith("LEAVE") || inputLine.startsWith("SHUTDOWN"))
             {
@@ -97,18 +97,19 @@ public class Sender extends Thread {
             	
             	// Loop to go through nodeList to send leave message (theoretically works) 
             	for(NodeInfo node : ChatNode.nodeList) {
-        			try
-        			{
+            		try
+            		{
         				Socket socket = new Socket(node.getAddress(), node.getPort());
         				toReceiver = new ObjectOutputStream( socket.getOutputStream() );
-						
-						// send leave
+        				
+        				// send leave
         				// all this does is remove the node from everywhere
-						toReceiver.writeObject(message);
-						toReceiver.flush();
+        				toReceiver.writeObject(message);
+        				toReceiver.flush();
 						toReceiver.close();
 						socket.close();
         			}
+            		// Show error if failed to close and flush correctly
         			catch(IOException e) 
         			{
         				System.err.println("Something broke :/");

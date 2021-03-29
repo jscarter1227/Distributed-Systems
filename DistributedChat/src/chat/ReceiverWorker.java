@@ -52,27 +52,26 @@ public class ReceiverWorker extends Thread {
 		{
 			// Add node
 			// Print join message as well
-		    ChatNode.nodeList.add(message.getNode());
-	        System.out.println(message.getNode().getName() + ": has joined");
-	        
-	      try
-	         {
-	            writeToNet.writeObject(ChatNode.nodeList);
-	         }
-	      catch(IOException ex)
-	         {
-	            System.err.println("Message unable to read. :(");
-	            System.exit(1);
-	         }
+			ChatNode.nodeList.add(message.getNode());
+			System.out.println(message.getNode().getName() + ": has joined");
+			
+			try
+			{
+				writeToNet.writeObject(ChatNode.nodeList);
+			}
+			catch(IOException ex)
+			{
+				System.err.println("Message unable to read. :(");
+				System.exit(1);
+			}
 
 		}
 		else if(message.getMessage().equals("LEAVE")) 
 		{
 		  // Remove node w/ IP
 		  // Print left message as well
-	      ChatNode.nodeList.remove(message.getNode());
-          System.out.println(message.getNode().getName() + ": has left");
-
+			ChatNode.nodeList.remove(message.getNode());
+			System.out.println(message.getNode().getName() + ": has left");
 		}
 		else
 		{
