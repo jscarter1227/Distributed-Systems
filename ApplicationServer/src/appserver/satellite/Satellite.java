@@ -159,7 +159,11 @@ public class Satellite extends Thread {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-	                	//TODO: The rest. lol. I dont really know what to do from here.
+	                	
+						Object toClient = requestedTool(requestedJob.getParameters);
+
+						writeToNet.writeObject(toClient);
+						
 	                    break;
 	
 	                default:
