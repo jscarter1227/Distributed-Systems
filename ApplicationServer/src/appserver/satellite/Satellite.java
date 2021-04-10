@@ -88,8 +88,8 @@ public class Satellite extends Thread {
         // ---------------------------------------------------------------
         // ...
     	try {
-			serverSocket = new ServerSocket(serverInfo.getPort());
-			socket = new Socket(serverInfo.getHost(), serverInfo.getPort());
+			serverSocket = new ServerSocket(satelliteInfo.getPort());
+			//socket = new Socket(serverInfo.getHost(), serverInfo.getPort());
 		} catch (IOException e) {
 			System.err.println("[Satellite.run] Error creating socket");
 			e.printStackTrace();
@@ -151,15 +151,21 @@ public class Satellite extends Thread {
 	                case JOB_REQUEST:
 	                    // processing job request
 	                    // ...
-	                	Job requestedJob = (Job) message.getContent();
+
 						try {
+		                	Job requestedJob = (Job) message.getContent();
 							Tool requestedTool = getToolObject(requestedJob.getToolName());
+		                	Object toClient = requestedTool.go(requestedJob.getParameters());
+		                	writeToNet.writeObject(toClient);
 						} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
 								| UnknownToolException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
 						}
-	                	//TODO: The rest. lol. I dont really know what to do from here.
+
 	                    break;
 	
 	                default:
