@@ -66,7 +66,16 @@ public class Satellite extends Thread {
         // TODO: This during part 3? Otte said not to worry about this for now.
         // read properties of the code server and create class loader
         // -------------------
-        // ...
+        Properties loaderProps;
+		try {
+			loaderProps = new PropertyHandler(classLoaderPropertiesFile);
+	        classLoader = new HTTPClassLoader (loaderProps.getProperty("HOST"), Integer.parseInt(loaderProps.getProperty("PORT")));
+	        System.out.println("[Satellite.Satellite] HTTPClassLoader created on " + satelliteInfo.getName());
+
+		} catch (IOException e) {
+			System.err.println("[Satellite] IOException when parsing class loader properties file");
+			e.printStackTrace();
+		}
         
         // create tools cache
         // -------------------
@@ -88,8 +97,7 @@ public class Satellite extends Thread {
         // ---------------------------------------------------------------
         // ...
     	try {
-			serverSocket = new ServerSocket(satelliteInfo.getPort());
-			//socket = new Socket(serverInfo.getHost(), serverInfo.getPort());
+			serverSocket = new ServerSocket(serverInfo.getPort());
 		} catch (IOException e) {
 			System.err.println("[Satellite.run] Error creating socket");
 			e.printStackTrace();
@@ -102,6 +110,7 @@ public class Satellite extends Thread {
     	while(true) {
     		try {
 				socket = serverSocket.accept();
+				System.out.println("[Satellite.run] HTTPClassLoader created on " + satelliteInfo.getName());
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -137,41 +146,41 @@ public class Satellite extends Thread {
 				e.printStackTrace();
 			}
     		
-    		while(true) {
-                // reading message
-                // ...
-    			try {
-					message = (Message)readFromNet.readObject();
-				} catch (ClassNotFoundException | IOException e) {
-					System.err.println("[SatelliteThread.run] Error reading message");
-					e.printStackTrace();
-				}
-    			
-                switch (message.getType()) {
-	                case JOB_REQUEST:
-	                    // processing job request
-	                    // ...
 
-						try {
-		                	Job requestedJob = (Job) message.getContent();
-							Tool requestedTool = getToolObject(requestedJob.getToolName());
-		                	Object toClient = requestedTool.go(requestedJob.getParameters());
-		                	writeToNet.writeObject(toClient);
-						} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-								| UnknownToolException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+            // reading message
+            // ...
+			try {
+				message = (Message)readFromNet.readObject();
+			} catch (ClassNotFoundException | IOException e) {
+				System.err.println("[SatelliteThread.run] Error reading message");
+				e.printStackTrace();
+			}
+			
+            switch (message.getType()) {
+                case JOB_REQUEST:
+                    // processing job request
+                    // ...
 
-	                    break;
-	
-	                default:
-	                    System.err.println("[SatelliteThread.run] Warning: Message type not implemented");
-	            }
-    		}
+					try {
+	                	Job requestedJob = (Job) message.getContent();
+						Tool requestedTool = getToolObject(requestedJob.getToolName());
+	                	Object toClient = requestedTool.go(requestedJob.getParameters());
+	                	writeToNet.writeObject(toClient);
+					} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+							| UnknownToolException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+                    break;
+
+                default:
+                    System.err.println("[SatelliteThread.run] Warning: Message type not implemented");
+            }
+		
 
         }
     }
