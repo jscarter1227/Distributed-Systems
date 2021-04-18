@@ -97,34 +97,41 @@ public class Satellite extends Thread {
 
     @Override
     public void run() {
-    	ServerSocket serverSocket = null;
+    	ServerSocket satelliteSocket = null;
+        Socket serverSocket = null;
     	Socket socket = null;
-        // register this satellite with the SatelliteManager on the server
-        // ---------------------------------------------------------------
-        // ...
-    	// Confirm with Otte -> shouldnt this be after we create server socket?
-        
-        
+        ObjectOutputStream writeToNet;
+        Message message = null;
+
         // create server socket
         // ---------------------------------------------------------------
-        // ...
-    	try {
-            serverSocket = new ServerSocket(serverInfo.getPort());
+        try {
+            satelliteSocket = new ServerSocket(satelliteInfo.getPort());
         } catch (IOException e) {
             System.err.println("[Satellite.run] Error creating socket");
+            e.printStackTrace();
+        }
+        
+        // register this satellite with the SatelliteManager on the server
+        // ---------------------------------------------------------------
+    	try {
+            serverSocket = new Socket(serverInfo.getHost(), serverInfo.getPort());
+            writeToNet = new ObjectOutputStream(serverSocket.getOutputStream());
+            message = new Message(REGISTER_SATELLITE, satelliteInfo);
+            writeToNet.writeObject(message);
+        } catch (IOException e) {
+            System.err.println("[Satellite.run] Error creating socket for server");
             e.printStackTrace();
         }
         
         
         // start taking job requests in a server loop
         // ---------------------------------------------------------------
-        // ...
     	while(true) {
             try {
-                socket = serverSocket.accept();
+                socket = satelliteSocket.accept();
                 System.out.println("[Satellite.run] HTTPClassLoader created on " + satelliteInfo.getName());
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 System.out.println("[Satellite.run] Error in accept");
                 e.printStackTrace();
             }
