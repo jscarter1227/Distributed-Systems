@@ -28,7 +28,8 @@ public class Server {
         // create satellite manager and load manager
         satelliteManager = new SatelliteManager();
         loadManager = new LoadManager();
-        
+        System.out.println("[Server.server] SatelliteManager Created");
+        System.out.println("[Server.server] LoadManager Created");
         try {
             // read server properties and create server socket
             Properties props = new PropertyHandler(serverPropertiesFile);
@@ -40,6 +41,7 @@ public class Server {
         
         try {
             serverSocket = new ServerSocket(port);
+            System.out.println("[Server.server] ServerSocket Created\n");
         } catch (IOException e) {
             System.err.println("[Server] Error creating serversocket");
             e.printStackTrace();
@@ -51,8 +53,7 @@ public class Server {
         // when a request comes in, a ServerThread object is spawned
         while(true) {
             try {
-                Socket socket = serverSocket.accept();
-                (new ServerThread(socket)).start();
+                (new ServerThread(serverSocket.accept())).start();
             } catch (IOException e) {
                 System.err.println("[Server.run] Error creating socket");
                 e.printStackTrace();
@@ -93,8 +94,11 @@ public class Server {
             // process message
             switch (message.getType()) {
                 case REGISTER_SATELLITE:
+                    System.out.println("[ServerThread.run] REGISTER_SATELLITE");
                     // read satellite info
                     ConnectivityInfo satelliteInfo = (ConnectivityInfo) message.getContent();
+                    System.out.println("Satellite Port : " + satelliteInfo.getPort());
+                    System.out.println("Satellite Name : " + satelliteInfo.getName());
                     
                     // register satellite
                     synchronized (Server.satelliteManager) {
@@ -109,7 +113,7 @@ public class Server {
                     break;
 
                 case JOB_REQUEST:
-                    System.err.println("\n[ServerThread.run] Received job request");
+                    System.err.println("[ServerThread.run] Received job request");
                     ConnectivityInfo nextSatellite;
                     String satelliteName = null;
                     synchronized (Server.loadManager) {
@@ -117,12 +121,13 @@ public class Server {
                         try {
                             satelliteName = loadManager.nextSatellite();
                         } catch (Exception e) {
-                            System.err.println("\n[ServerThread.run] Error getting next satellite");
+                            System.err.println("[ServerThread.run] Error getting next satellite");
                             e.printStackTrace();
                         }
                         
                         // get connectivity info for next satellite from satellite manager
                         nextSatellite = satelliteManager.getSatelliteForName(satelliteName);
+                        System.out.println("[ServerThread.run] Satellite to process job request: " + nextSatellite.getName());
                     }
 
                     Socket satellite = null;
@@ -130,7 +135,7 @@ public class Server {
                     try {
                         satellite = new Socket(nextSatellite.getHost(), nextSatellite.getPort());
                     } catch (Exception e) {
-                        System.err.println("\n[ServerThread.run] Error opening satellite socket");
+                        System.err.println("[ServerThread.run] Error opening satellite socket");
                         e.printStackTrace();
                     }
                     

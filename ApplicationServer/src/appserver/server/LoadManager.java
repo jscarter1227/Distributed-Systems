@@ -18,27 +18,23 @@ public class LoadManager {
     public void satelliteAdded(String satelliteName) {
         // add satellite
     	satellites.add(satelliteName);
+    	System.out.println("[LoadManager.satelliteAdded] " + satelliteName + " added");
     }
 
 
     public String nextSatellite() throws Exception {
         
         int numberSatellites = satellites.size();
-        int accessSatellite = 0;
         // implement policy that returns the satellite name according to a round robin methodology
         synchronized (satellites) {
-            // Increase index
-        	lastSatelliteIndex++;
-        	// Increment accessSatellite so we know which one to access
-        	accessSatellite = lastSatelliteIndex;
-        	
-        	// if the index is equal to the number of satellites, start over
-        	if(lastSatelliteIndex == numberSatellites) {
-        		lastSatelliteIndex = -1;
-        	}
-            
+            if(lastSatelliteIndex == numberSatellites - 1) {
+                lastSatelliteIndex = 0;
+            } else {
+                lastSatelliteIndex += 1;
+            }
+
         }
         // ... name of satellite who is supposed to take job
-        return satellites.get(accessSatellite).toString();
+        return satellites.get(lastSatelliteIndex).toString();
     }
 }

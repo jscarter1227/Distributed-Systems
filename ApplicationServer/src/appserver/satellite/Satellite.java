@@ -49,6 +49,7 @@ public class Satellite extends Thread {
             
             // get sat port
             satelliteInfo.setPort(Integer.parseInt(props.getProperty("PORT")));
+            
         } catch (IOException e) {
             System.err.println("[Satellite] IOException when parsing satellite properties file");
             e.printStackTrace();
@@ -102,6 +103,18 @@ public class Satellite extends Thread {
     	Socket socket = null;
         ObjectOutputStream writeToNet;
         Message message = null;
+        
+        // register this satellite with the SatelliteManager on the server
+        // ---------------------------------------------------------------
+        try {
+            serverSocket = new Socket(serverInfo.getHost(), serverInfo.getPort());
+            writeToNet = new ObjectOutputStream(serverSocket.getOutputStream());
+            message = new Message(REGISTER_SATELLITE, satelliteInfo);
+            writeToNet.writeObject(message);
+        } catch (IOException e) {
+            System.err.println("[Satellite.run] Error creating socket for server");
+            e.printStackTrace();
+        }
 
         // create server socket
         // ---------------------------------------------------------------
@@ -111,19 +124,7 @@ public class Satellite extends Thread {
             System.err.println("[Satellite.run] Error creating socket");
             e.printStackTrace();
         }
-        
-        // register this satellite with the SatelliteManager on the server
-        // ---------------------------------------------------------------
-    	try {
-            serverSocket = new Socket(serverInfo.getHost(), serverInfo.getPort());
-            writeToNet = new ObjectOutputStream(serverSocket.getOutputStream());
-            message = new Message(REGISTER_SATELLITE, satelliteInfo);
-            writeToNet.writeObject(message);
-        } catch (IOException e) {
-            System.err.println("[Satellite.run] Error creating socket for server");
-            e.printStackTrace();
-        }
-        
+                
         
         // start taking job requests in a server loop
         // ---------------------------------------------------------------
@@ -139,7 +140,7 @@ public class Satellite extends Thread {
     	}
     }
 
-    // inner helper class that is instanciated in above server loop and processes single job requests
+    // inner helper class that is instantiated in above server loop and processes single job requests
     private class SatelliteThread extends Thread {
         // initial variables
         Satellite satellite = null;

@@ -21,16 +21,16 @@ public class FibonacciClient extends Thread {
 	
 	public FibonacciClient(String props, int num) {
 		try {
-			Properties serverProps = new PropertyHandler(props);
-			host = serverProps.getProperty("HOST");
-			port = Integer.parseInt(serverProps.getProperty("PORT"));
-			fibNum = num;
+            Properties serverProps = new PropertyHandler(props);
+            host = serverProps.getProperty("HOST");
+            port = Integer.parseInt(serverProps.getProperty("PORT"));
+            fibNum = num;
+            System.out.println("[FibonacciClient.FibonacciClient] Host: " + host);
+            System.out.println("[FibonacciClient.FibonacciClient] Port: " + port);
 		} catch (IOException e) {
             System.err.println("[FibonacciClient] IOException when parsing server properties file");
             e.printStackTrace();
         }
-		System.out.println("[FibonacciClient.FibonacciClient] Host: " + host);
-		System.out.println("[FibonacciClient.FibonacciClient] Port: " + port);
 	}
 	
 	public void run() {
@@ -55,7 +55,7 @@ public class FibonacciClient extends Thread {
             Integer result = (Integer) readFromNet.readObject();
             System.out.println("Fibonacci of " + fibNum + ": " + result);
         } catch (Exception ex) {
-            System.err.println("[PlusOneClient.run] Error occurred");
+            System.err.println("[FibonacciClient.run] Error occurred");
             ex.printStackTrace();
         }
 	}

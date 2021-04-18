@@ -8,8 +8,11 @@ public class FibonacciAux {
     }
     
     public int doFib(int num) {
-    	if(num <= 1) {
-    		return num;
+        if(num == 0) {
+            return 0;
+        }
+        else if(num == 1) {
+    		return 1;
     	}
         return doFib(num-1) + doFib(num-2);
     }
